@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Send Feedback — Project Pilot</title>
+<meta name="description" content="Report a bug or share an idea for Project Pilot.">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --base:#0a1120;
+    --panel:#111c34;
+    --panel-raised:#172647;
+    --border:#24345c;
+    --ink:#f8fafc;
+    --ink-soft:#93a2bf;
+    --blue:#3b82f6;
+    --blue-bright:#60a5fa;
+    --blue-deep:#1d4ed8;
+    --green:#4ade80;
+    --danger:#f56b71;
+    --shadow:0 1px 2px rgba(0,0,0,0.3), 0 20px 48px -24px rgba(0,0,0,0.65);
+    --display:"Space Grotesk",sans-serif;
+    --sans:"Inter",sans-serif;
+    --mono:"IBM Plex Mono",monospace;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 620px at 18% -8%,rgba(59,130,246,0.16),transparent 60%),
+      radial-gradient(900px 500px at 100% 10%,rgba(96,165,250,0.08),transparent 55%),
+      var(--base);
+    background-repeat:no-repeat;
+    min-height:100vh;
+  }
+
+  h1,h2{
+    font-family:var(--display);
+    font-weight:700;
+    margin:0 0 0.4em;
+    letter-spacing:-0.01em;
+  }
+
+  a{color:inherit;}
+
+  :focus-visible{
+    outline:2px solid var(--blue-bright);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+
+  header{padding:26px 0;}
+
+  .logo{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:1.1rem;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    color:var(--ink);
+    text-decoration:none;
+  }
+
+  .mark{
+    width:32px;
+    height:32px;
+    border-radius:9px;
+    overflow:hidden;
+    flex:none;
+  }
+
+  .mark img{
+    width:100%;
+    height:100%;
+    display:block;
+  }
+
+  .pilot{color:var(--blue-bright);}
+
+  .back-link{
+    font-family:var(--mono);
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-bottom:14px;
+  }
+
+  .back-link:hover{color:var(--ink);}
+
+  main{padding:12px 0 90px;}
+
+  .intro{margin-bottom:30px;}
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--blue-bright);
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin-bottom:12px;
+  }
+
+  .eyebrow::before{
+    content:"";
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--blue-bright);
+  }
+
+  .intro h1{
+    font-size:clamp(1.7rem,4vw,2.2rem);
+  }
+
+  .intro p{
+    color:var(--ink-soft);
+    font-size:1rem;
+    max-width:52ch;
+  }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:32px;
+    box-shadow:var(--shadow);
+  }
+
+  @media (max-width:600px){
+    .card{padding:22px;}
+  }
+
+  .field{margin-bottom:20px;}
+
+  .field label{
+    display:block;
+    font-family:var(--display);
+    font-weight:600;
+    font-size:0.88rem;
+    margin-bottom:9px;
+  }
+
+  .field .hint{
+    font-size:0.78rem;
+    color:var(--ink-soft);
+    font-weight:400;
+    font-family:var(--sans);
+    margin-left:4px;
+  }
+
+  .type-row{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+
+  .type-row input{
+    position:absolute;
+    opacity:0;
+    pointer-events:none;
+  }
+
+  .type-row .opt{
+    font-family:var(--mono);
+    font-size:0.8rem;
+    font-weight:600;
+    color:var(--ink-soft);
+    background:var(--panel-raised);
+    border:1px solid var(--border);
+    border-radius:100px;
+    padding:9px 16px;
+    cursor:pointer;
+    transition:all .15s ease;
+    user-select:none;
+  }
+
+  .type-row input:checked + .opt{
+    background:rgba(59,130,246,0.14);
+    border-color:var(--blue-bright);
+    color:var(--blue-bright);
+  }
+
+  input[type="email"],
+  textarea{
+    width:100%;
+    font-family:var(--sans);
+    font-size:0.94rem;
+    color:var(--ink);
+    background:var(--panel-raised);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:13px 15px;
+    outline:none;
+    transition:border-color .15s ease;
+  }
+
+  input[type="email"]:focus,
+  textarea:focus{
+    border-color:var(--blue-bright);
+  }
+
+  textarea{
+    min-height:130px;
+    resize:vertical;
+    line-height:1.5;
+  }
+
+  ::placeholder{
+    color:var(--ink-soft);
+    opacity:1;
+  }
+
+  .hp{
+    position:absolute;
+    left:-9999px;
+    top:-9999px;
+  }
+
+  .btn{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:0.92rem;
+    background:linear-gradient(135deg,#356fe0 0%,#1d4ed8 100%);
+    color:#fff;
+    border:none;
+    border-radius:100px;
+    padding:13px 26px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    box-shadow:0 1px 2px rgba(30,64,175,0.4),0 12px 26px -10px rgba(37,99,235,0.7);
+    transition:filter .15s ease,transform .1s ease;
+    width:100%;
+    justify-content:center;
+    text-decoration:none;
+  }
+
+  .btn:hover{filter:brightness(1.08);}
+
+  .btn:disabled{
+    opacity:0.6;
+    cursor:default;
+    filter:none;
+  }
+
+  .status{
+    margin-top:16px;
+    font-size:0.86rem;
+    text-align:center;
+    display:none;
+  }
+
+  .status.error{color:var(--danger);}
+  .status.ok{color:var(--green);}
+
+  #successState{
+    display:none;
+    text-align:center;
+    padding:20px 4px;
+  }
+
+  #successState .icon{
+    margin:0 auto 14px;
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:rgba(74,222,128,0.14);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  #successState p{
+    color:var(--ink-soft);
+    margin-bottom:22px;
+  }
+
+  footer{
+    margin-top:28px;
+    text-align:center;
+    font-family:var(--mono);
+    font-size:0.76rem;
+    color:var(--ink-soft);
+  }
+
+  footer a{
+    color:var(--blue-bright);
+    text-decoration:none;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="back-link" href="index.html">← Back to Project Pilot</a>
+
+    <a class="logo" href="index.html">
+      <span class="mark">
+        <img src="logo-mark.png" alt="Project Pilot logo">
+      </span>
+      Project<span class="pilot">&nbsp;Pilot</span>
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <div class="intro">
+      <span class="eyebrow">Feedback</span>
+      <h1>Found a bug? Have an idea?</h1>
+      <p>
+        Your reports and suggestions go straight to the team and directly shape
+        what gets fixed and built next. Thanks for helping steer the course.
+      </p>
+    </div>
+
+    <div class="card">
+
+      <form id="feedbackForm">
+
+        <input
+          type="text"
+          name="_honey"
+          class="hp"
+          tabindex="-1"
+          autocomplete="off"
+        >
+
+        <input
+          type="hidden"
+          name="_subject"
+          value="Project Pilot feedback"
+        >
+
+        <input
+          type="hidden"
+          name="_template"
+          value="table"
+        >
+
+        <input
+          type="hidden"
+          name="_captcha"
+          value="false"
+        >
+
+        <div class="field">
+          <label>What is this about?</label>
+
+          <div class="type-row">
+            <label>
+              <input
+                type="radio"
+                name="type"
+                value="Bug"
+                checked
+              >
+              <span class="opt">Bug</span>
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                name="type"
+                value="Idea"
+              >
+              <span class="opt">Idea</span>
+            </label>
+
+            <label>
+              <input
+                type="radio"
+                name="type"
+                value="Other"
+              >
+              <span class="opt">Other</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="message">
+            Tell us what happened
+            <span class="hint">— the more detail, the better</span>
+          </label>
+
+          <textarea
+            id="message"
+            name="message"
+            placeholder="e.g. The task board doesn't update after I mark something done, even after refreshing..."
+            required
+          ></textarea>
+        </div>
+
+        <div class="field">
+          <label for="email">
+            Your email
+            <span class="hint">(optional, in case we have a follow-up question)</span>
+          </label>
+
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@example.com"
+          >
+        </div>
+
+        <button
+          class="btn"
+          type="submit"
+          id="submitBtn"
+        >
+          Send feedback
+        </button>
+
+        <div class="status" id="statusMsg"></div>
+
+      </form>
+
+      <div id="successState">
+
+        <div class="icon">
+          <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="var(--green)"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="9.5"/>
+            <path d="M8 12.5l2.8 2.8L16.5 9"/>
+          </svg>
+        </div>
+
+        <h2>Thanks — got it!</h2>
+
+        <p>
+          Your feedback was sent. It genuinely helps shape where Project Pilot goes next.
+        </p>
+
+        <a
+          class="btn"
+          href="index.html"
+          style="display:inline-flex;width:auto;"
+        >
+          Back to Project Pilot
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+</main>
+
+<script>
+  const FORMSUBMIT_ENDPOINT =
+    "https://formsubmit.co/ajax/milan.fridrich3@gmail.com";
+
+  const form = document.getElementById("feedbackForm");
+  const statusMsg = document.getElementById("statusMsg");
+  const submitBtn = document.getElementById("submitBtn");
+  const messageField = document.getElementById("message");
+
+  const PLACEHOLDERS = {
+    Bug: "e.g. The task board doesn't update after I mark something done, even after refreshing...",
+    Idea: "e.g. It'd be great to filter the activity feed by project...",
+    Other: "Anything else on your mind — a question, a thought, general feedback..."
+  };
+
+  document
+    .querySelectorAll('input[name="type"]')
+    .forEach(input => {
+      input.addEventListener("change", () => {
+        messageField.placeholder = PLACEHOLDERS[input.value] || "";
+      });
+    });
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending…";
+    statusMsg.style.display = "none";
+
+    try {
+      const response = await fetch(FORMSUBMIT_ENDPOINT, {
+        method: "POST",
+        headers: {
+          Accept: "application/json"
+        },
+        body: new FormData(form)
+      });
+
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+
+      form.style.display = "none";
+      document.getElementById("successState").style.display = "block";
+
+    } catch (error) {
+      statusMsg.textContent =
+        "Something went wrong sending that — please try again in a moment.";
+
+      statusMsg.className = "status error";
+      statusMsg.style.display = "block";
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Send feedback";
+    }
+  });
+</script>
+
+</body>
+</html>

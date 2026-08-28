@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Pilot — Stay on Course</title>
+<meta name="description" content="Project Pilot is the modern project management platform that keeps your whole team, tasks, and communication in one place. Plan projects, manage tasks, and stay on course.">
+
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="shortcut icon" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://welcomeaboard.netlify.app/">
+<meta property="og:title" content="Project Pilot — Stay on Course">
+<meta property="og:description" content="Everything your project needs. All in one place. Plan projects, manage tasks, and keep your team aligned.">
+<meta property="og:image" content="https://welcomeaboard.netlify.app/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Project Pilot — Stay on Course">
+<meta name="twitter:description" content="Everything your project needs. All in one place.">
+<meta name="twitter:image" content="https://welcomeaboard.netlify.app/og-image.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --base:#0a1120;
+    --panel:#111c34;
+    --panel-raised:#172647;
+    --border:#24345c;
+    --ink:#f8fafc;
+    --ink-soft:#93a2bf;
+    --blue:#3b82f6;
+    --blue-bright:#60a5fa;
+    --blue-deep:#1d4ed8;
+    --amber:#f5a623;
+    --amber-pale:rgba(245,166,35,0.12);
+    --danger:#f56b71;
+    --green:#4ade80;
+    --shadow:0 1px 2px rgba(0,0,0,0.3), 0 20px 48px -24px rgba(0,0,0,0.65);
+    --radius:16px;
+    --display:"Space Grotesk", sans-serif;
+    --sans:"Inter", sans-serif;
+    --mono:"IBM Plex Mono", monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(1100px 620px at 18% -8%, rgba(59,130,246,0.16), transparent 60%),
+      radial-gradient(900px 500px at 100% 10%, rgba(96,165,250,0.08), transparent 55%),
+      var(--base);
+    background-repeat:no-repeat;
+    overflow-x:hidden;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+    html{scroll-behavior:auto;}
+  }
+  a{color:inherit;}
+  img,svg{display:block;max-width:100%;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+  h1,h2,h3{font-family:var(--display);font-weight:700;margin:0 0 0.4em;letter-spacing:-0.01em;color:var(--ink);}
+  h1{font-size:clamp(2.2rem,5.4vw,4rem);line-height:1.06;}
+  h2{font-size:clamp(1.6rem,3vw,2.3rem);line-height:1.18;}
+  h3{font-size:1.15rem;font-weight:600;}
+  p{margin:0 0 1em;}
+  ::placeholder{color:var(--ink-soft);opacity:1;}
+  :focus-visible{outline:2px solid var(--blue-bright);outline-offset:3px;border-radius:4px;}
+
+  .eyebrow{
+    font-family:var(--mono);font-size:0.72rem;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--blue-bright);display:flex;align-items:center;gap:9px;margin-bottom:1em;
+  }
+  .eyebrow::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--blue-bright);flex:none;}
+  .eyebrow .leg-num{color:var(--ink-soft);}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s cubic-bezier(.2,.7,.3,1), transform .7s cubic-bezier(.2,.7,.3,1);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* ---- course progress bar: a thin instrument reading of scroll position ---- */
+  .course-bar{position:fixed;top:0;left:0;right:0;height:3px;z-index:60;background:var(--border);}
+  .course-bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--blue-bright),var(--blue-deep));transition:width .1s linear;}
+
+  header.site{position:sticky;top:3px;z-index:50;background:rgba(10,17,32,0.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1120px;margin:0 auto;}
+  .logo{font-family:var(--display);font-weight:700;font-size:1.1rem;display:flex;align-items:center;gap:9px;color:var(--ink);text-decoration:none;}
+  .logo .mark{width:28px;height:28px;border-radius:8px;overflow:hidden;flex:none;}
+  .logo .mark img{width:100%;height:100%;display:block;}
+  .logo .pilot{color:var(--blue-bright);}
+  .nav-links{display:flex;align-items:center;gap:24px;font-size:0.92rem;}
+  .nav-links a{text-decoration:none;color:var(--ink-soft);transition:color .2s;}
+  .nav-links a:hover{color:var(--ink);}
+
+  .btn{
+    font-family:var(--display);font-weight:600;font-size:0.88rem;
+    padding:11px 20px;border-radius:100px;border:none;cursor:pointer;
+    background:linear-gradient(135deg,#356fe0 0%,#1d4ed8 100%);color:#fff;text-decoration:none;
+    box-shadow:0 1px 2px rgba(30,64,175,0.4), 0 12px 26px -10px rgba(37,99,235,0.7);
+    transition:filter .15s ease, transform .1s ease;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn:hover{filter:brightness(1.08);}
+  .btn:active{transform:translateY(1px);}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--border);box-shadow:none;}
+  .btn.ghost:hover{border-color:var(--blue-bright);filter:none;}
+  .nav-links .btn{padding:9px 18px;}
+
+  .menu-toggle{
+    display:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--border);
+    background:transparent;cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:4px;
+  }
+  .menu-toggle span{width:18px;height:2px;background:var(--ink);border-radius:2px;transition:transform .25s ease, opacity .25s ease;}
+  .menu-toggle.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+  .menu-toggle.open span:nth-child(2){opacity:0;}
+  .menu-toggle.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+
+  @media (max-width:760px){
+    .menu-toggle{display:flex;}
+    .nav-links{
+      position:fixed;top:68px;left:0;right:0;z-index:49;
+      flex-direction:column;align-items:stretch;gap:0;
+      background:rgba(10,17,32,0.98);backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--border);
+      max-height:0;overflow:hidden;opacity:0;pointer-events:none;
+      transition:max-height .35s ease, opacity .25s ease;
+      padding:0 24px;
+    }
+    .nav-links.open{max-height:460px;opacity:1;pointer-events:auto;padding:10px 24px 22px;}
+    .nav-links a{width:100%;padding:13px 0;border-bottom:1px solid var(--border);color:var(--ink);}
+    .nav-links .btn{margin-top:12px;width:100%;justify-content:center;padding:12px 16px;}
+  }
+
+  /* ---- fixed heading / compass instrument — the signature "course" device ---- */
+  .course-hud{
+    position:fixed;right:22px;bottom:22px;z-index:45;
+    display:flex;align-items:center;gap:11px;
+    background:rgba(17,28,52,0.82);backdrop-filter:blur(10px);
+    border:1px solid var(--border);border-radius:100px;
+    padding:8px 16px 8px 8px;box-shadow:var(--shadow);
+    opacity:0;transform:translateY(8px);transition:opacity .4s ease, transform .4s ease;
+  }
+  .course-hud.show{opacity:1;transform:translateY(0);}
+  .course-hud .dial-wrap{width:40px;height:40px;flex:none;position:relative;}
+  .course-hud .dial{width:100%;height:100%;transform:rotate(0deg);transition:transform .15s linear;}
+  .course-hud .dial circle{fill:var(--panel-raised);stroke:var(--border);stroke-width:1.5;}
+  .course-hud .dial .tick{stroke:var(--ink-soft);stroke-width:1.4;}
+  .course-hud .dial .needle{fill:var(--blue-bright);}
+  .course-hud .readout{display:flex;flex-direction:column;line-height:1.25;}
+  .course-hud .hdg{font-family:var(--mono);font-size:0.76rem;color:var(--blue-bright);font-weight:600;}
+  .course-hud .leg{font-family:var(--mono);font-size:0.65rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.06em;max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  @media (max-width:960px){.course-hud{display:none;}}
+
+  .hero{padding:56px 0 20px;text-align:center;}
+  .hero .lede{font-size:1.08rem;color:var(--ink-soft);max-width:54ch;margin:0 auto 1.6em;}
+  .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}  /* ---- interactive course demo ---- */
+  .stage-wrap{margin-top:48px;text-align:left;}
+  .stage{
+    position:relative;border-radius:26px;overflow:hidden;
+    border:1px solid var(--border);box-shadow:var(--shadow);
+    padding:24px 26px 28px;background:var(--panel);
+  }
+  .stage-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+  .stage-topbar .proj{font-family:var(--display);font-weight:600;font-size:1rem;}
+  .status-pill{
+    font-family:var(--mono);font-size:0.74rem;letter-spacing:0.04em;font-weight:600;
+    padding:7px 13px;border-radius:100px;display:inline-flex;align-items:center;gap:7px;
+    background:var(--amber-pale);color:var(--amber);transition:background .4s ease, color .4s ease;
+  }
+  .status-pill .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+  .status-pill.done{background:rgba(74,222,128,0.14);color:var(--green);}
+  .status-pill.mid{background:rgba(96,165,250,0.14);color:var(--blue-bright);}
+
+  .route-row{position:relative;padding:6px 6px 30px;margin-bottom:6px;}
+  .route-track{position:relative;height:3px;background:var(--border);border-radius:3px;margin:0 18px;}
+  .route-fill{position:absolute;left:0;top:0;height:100%;width:8%;background:linear-gradient(90deg,var(--blue-bright),var(--blue-deep));border-radius:3px;transition:width .5s cubic-bezier(.2,.7,.3,1);}
+  .route-plane{position:absolute;top:50%;left:8%;transform:translate(-50%,-50%) rotate(90deg);transition:left .5s cubic-bezier(.2,.7,.3,1);color:var(--blue-bright);filter:drop-shadow(0 2px 6px rgba(59,130,246,0.6));}
+  .waypoints{display:flex;justify-content:space-between;margin:0 8px;position:relative;top:-10px;}
+  .waypoint{display:flex;flex-direction:column;align-items:center;gap:7px;width:33%;}
+  .waypoint .wdot{width:13px;height:13px;border-radius:50%;background:var(--panel-raised);border:2px solid var(--border);transition:all .4s ease;}
+  .waypoint.reached .wdot{background:var(--blue-bright);border-color:var(--blue-bright);box-shadow:0 0 0 4px rgba(96,165,250,0.18);}
+  .waypoint .wlabel{font-family:var(--mono);font-size:0.68rem;color:var(--ink-soft);text-align:center;transition:color .3s;}
+  .waypoint.reached .wlabel{color:var(--ink);}
+
+  .stat-row{display:flex;gap:14px;margin:18px 0 22px;flex-wrap:wrap;}
+  .stat-card{flex:1;min-width:130px;background:var(--panel-raised);border:1px solid var(--border);border-radius:14px;padding:14px 16px;}
+  .stat-card .lbl{font-size:0.78rem;color:var(--ink-soft);margin-bottom:6px;}
+  .stat-card .big{font-family:var(--mono);font-weight:600;font-size:1.4rem;}
+  .stat-card .big .unit{font-size:0.8rem;color:var(--ink-soft);font-weight:400;}
+
+  .task-list{display:flex;flex-direction:column;gap:8px;}
+  .task-row{
+    display:flex;align-items:center;gap:12px;background:var(--panel-raised);border:1px solid var(--border);
+    border-radius:12px;padding:11px 14px;cursor:pointer;user-select:none;transition:border-color .2s;
+  }
+  .task-row:hover{border-color:var(--blue-bright);}
+  .task-row .box{
+    width:19px;height:19px;border-radius:6px;border:2px solid var(--border);flex:none;
+    display:flex;align-items:center;justify-content:center;transition:all .2s;
+  }
+  .task-row.done .box{background:var(--blue-bright);border-color:var(--blue-bright);}
+  .task-row .box svg{opacity:0;transform:scale(0.5);transition:all .2s;color:#0a1120;}
+  .task-row.done .box svg{opacity:1;transform:scale(1);}
+  .task-row .title{flex:1;font-size:0.92rem;transition:color .2s;}
+  .task-row.done .title{color:var(--ink-soft);text-decoration:line-through;}
+  .task-tag{font-family:var(--mono);font-size:0.68rem;padding:3px 9px;border-radius:100px;border:1px solid;flex:none;}
+  .task-tag.low{color:var(--ink-soft);border-color:var(--border);}
+  .task-tag.medium{color:var(--amber);border-color:rgba(245,166,35,0.35);}
+  .task-tag.high{color:var(--danger);border-color:rgba(245,107,113,0.35);}
+
+  .demo-hint{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:0.74rem;color:var(--ink-soft);margin-top:16px;justify-content:center;}
+
+  section{padding:76px 0;scroll-margin-top:88px;}
+  .section-head{max-width:660px;margin-bottom:44px;}
+  .section-head p{color:var(--ink-soft);font-size:1rem;}
+  .section-head.center{margin-left:auto;margin-right:auto;text-align:center;}
+  .section-head.center .eyebrow{justify-content:center;}
+
+  /* why section — drift vs course comparison */
+  .drift-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media (max-width:880px){.drift-grid{grid-template-columns:1fr;}}
+  .drift-card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:24px;}  .drift-card h3{margin-top:14px;font-size:1.02rem;}
+  .drift-card p{color:var(--ink-soft);font-size:0.9rem;margin-bottom:0;}
+
+  /* feature instrument grid */
+  .feature-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+  @media (max-width:980px){.feature-grid{grid-template-columns:repeat(3,1fr);}}
+  @media (max-width:640px){.feature-grid{grid-template-columns:repeat(2,1fr);}}
+  .feature-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px 16px;}
+  .feature-card .icon-box{width:36px;height:36px;border-radius:10px;background:var(--panel-raised);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--blue-bright);margin-bottom:12px;}
+  .feature-card h3{font-size:0.94rem;margin-bottom:5px;}
+  .feature-card p{color:var(--ink-soft);font-size:0.8rem;margin-bottom:0;line-height:1.5;}
+
+  /* flight plan / how it works */
+  .flight-plan{position:relative;padding-left:64px;}
+  .flight-plan .line{position:absolute;left:23px;top:8px;bottom:8px;width:1px;background:linear-gradient(180deg,var(--blue-bright),var(--blue),var(--blue-deep));transform:scaleY(0);transform-origin:top;transition:transform 1.3s cubic-bezier(.2,.7,.3,1);}
+  .flight-plan .line.in{transform:scaleY(1);}
+  .fp-item{position:relative;margin-bottom:52px;}
+  .fp-item:last-child{margin-bottom:0;}
+  .fp-item .num{
+    position:absolute;left:-64px;top:2px;width:44px;height:44px;border-radius:50%;
+    background:var(--panel);border:2px solid var(--blue-bright);color:var(--blue-bright);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .fp-item .tag{font-family:var(--mono);font-size:0.75rem;color:var(--ink-soft);}
+  .fp-item p{color:var(--ink-soft);font-size:0.96rem;max-width:640px;}
+
+  /* for teams */
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media (max-width:760px){.grid-2{grid-template-columns:1fr;}}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:26px;box-shadow:var(--shadow);}
+  .card svg.icon{color:var(--blue-bright);margin-bottom:16px;}
+  .card p{color:var(--ink-soft);font-size:0.94rem;margin-bottom:0;}
+  .role-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+  .role-chip{font-family:var(--mono);font-size:0.72rem;background:var(--panel-raised);border:1px solid var(--border);border-radius:100px;padding:6px 12px;color:var(--ink-soft);}
+  .role-chip.owner{color:var(--blue-bright);border-color:rgba(59,130,246,0.4);}
+
+  /* security */
+  .security-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  @media (max-width:760px){.security-grid{grid-template-columns:1fr;}}
+  .sec-card{display:flex;gap:14px;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;}
+  .sec-card .icon-box{width:38px;height:38px;border-radius:10px;background:rgba(96,165,250,0.1);border:1px solid rgba(59,130,246,0.25);display:flex;align-items:center;justify-content:center;color:var(--blue-bright);flex:none;}
+  .sec-card h3{font-size:0.96rem;margin-bottom:4px;}
+  .sec-card p{color:var(--ink-soft);font-size:0.86rem;margin-bottom:0;}
+
+  /* preview gallery */
+  .preview-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+  .preview-tab{
+    font-family:var(--mono);font-size:0.78rem;background:var(--panel);border:1px solid var(--border);
+    border-radius:100px;padding:9px 16px;cursor:pointer;color:var(--ink-soft);transition:all .2s;
+  }
+  .preview-tab.active{background:rgba(59,130,246,0.12);border-color:rgba(59,130,246,0.4);color:var(--blue-bright);}
+  .preview-frame{border-radius:24px;border:1px solid var(--border);background:var(--panel);box-shadow:var(--shadow);overflow:hidden;}
+  .preview-chrome{display:flex;align-items:center;gap:6px;padding:12px 16px;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.02);}
+  .preview-chrome span{width:9px;height:9px;border-radius:50%;background:var(--border);}
+  .preview-body{padding:22px;min-height:280px;}
+  .preview-panel{display:none;}
+  .preview-panel.active{display:block;}
+
+  .mini-cards{display:flex;flex-direction:column;gap:10px;}
+  .mini-project{display:flex;align-items:center;gap:12px;background:var(--panel-raised);border:1px solid var(--border);border-radius:12px;padding:12px;}
+  .mini-project .ring{width:38px;height:38px;flex:none;}
+  .mini-project .name{font-size:0.86rem;}
+  .mini-project .bar{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:6px;}
+  .mini-project .bar b{display:block;height:100%;background:linear-gradient(90deg,var(--blue-bright),var(--blue-deep));}
+
+  .kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  @media (max-width:640px){.kanban{grid-template-columns:1fr;}}
+  .kanban-col .col-title{font-family:var(--mono);font-size:0.7rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
+  .kanban-card{background:var(--panel-raised);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:0.82rem;}
+  .kanban-card .kt{display:inline-block;margin-top:6px;font-family:var(--mono);font-size:0.65rem;padding:2px 8px;border-radius:100px;border:1px solid var(--border);color:var(--ink-soft);}
+
+  .team-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+  .team-row:last-child{border-bottom:none;}
+  .team-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#356fe0,#1d4ed8);flex:none;}
+  .team-row .name{font-size:0.86rem;flex:1;}
+  .team-role{font-family:var(--mono);font-size:0.68rem;padding:3px 10px;border-radius:100px;border:1px solid var(--border);color:var(--ink-soft);}
+  .team-role.owner{color:var(--blue-bright);border-color:rgba(59,130,246,0.4);}
+
+  .download{background:var(--panel);border:1px solid var(--border);border-radius:28px;padding:56px 40px;text-align:center;position:relative;overflow:hidden;}
+  .download::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 700px 300px at 50% 0%, rgba(59,130,246,0.18), transparent 65%);}
+  .download > *{position:relative;}
+  @media (max-width:600px){.download{padding:40px 22px;}}
+
+  footer{padding:36px 0 56px;border-top:1px solid var(--border);}
+  .foot-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;font-size:0.85rem;color:var(--ink-soft);}
+  .foot-row a{color:var(--blue-bright);text-decoration:none;}
+  .foot-row a:hover{text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<div class="course-bar"><div class="course-bar-fill" id="courseBarFill"></div></div>
+
+<header class="site">
+  <div class="nav">
+    <a class="logo" href="#top">
+      <span class="mark"><img src="logo-mark.png" alt="Project Pilot logo"></span>
+      Project<span class="pilot">&nbsp;Pilot</span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#security">Security</a>
+      <a href="feedback.html">Feedback</a>
+      <a href="https://project-pilot-1n5w.onrender.com" class="btn">Get Started</a>
+    </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- fixed heading instrument — rotates with scroll, reads out the current section -->
+<div class="course-hud" id="courseHud">
+  <div class="dial-wrap">
+    <svg class="dial" id="hudDial" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="18"/>
+      <line class="tick" x1="20" y1="3" x2="20" y2="6"/>
+      <line class="tick" x1="20" y1="34" x2="20" y2="37"/>
+      <line class="tick" x1="3" y1="20" x2="6" y2="20"/>
+      <line class="tick" x1="34" y1="20" x2="37" y2="20"/>
+      <path class="needle" d="M20 8 L23 20 L20 17 L17 20 Z"/>
+    </svg>
+  </div>
+  <div class="readout">
+    <span class="hdg" id="hudHeading">HDG 000°</span>
+    <span class="leg" id="hudSection">Hero</span>
+  </div>
+</div>
+
+<section class="hero" id="top">
+  <div class="wrap">
+    <h1>Stay on Course.</h1>
+    <h2 style="font-size:clamp(1.3rem,2.6vw,1.7rem);color:var(--ink-soft);font-weight:500;font-family:var(--sans);margin-top:0.1em;">Everything your project needs. All in one place.</h2>
+    <p class="lede">Plan projects, manage tasks, collaborate with your team, and keep everything under control — all from one place.</p>
+    <div class="hero-cta">
+      <a href="https://project-pilot-1n5w.onrender.com" class="btn">Get Started →</a>
+      <a href="#features" class="btn ghost">Explore Project Pilot</a>
+    </div>
+
+    <div class="stage-wrap">
+      <div class="stage">
+        <div class="stage-topbar">
+          <span class="proj">Website Relaunch</span>
+          <span class="status-pill" id="statusPill"><span class="dot"></span><span id="statusLabel">OFF THE RUNWAY</span></span>
+        </div>
+
+        <div class="route-row">
+          <div class="route-track">
+            <div class="route-fill" id="routeFill"></div>
+            <div class="route-plane" id="routePlane">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M21 3 3 10.5l7.5 3L14 21l7-18Z"/></svg>
+            </div>
+          </div>
+          <div class="waypoints">
+            <div class="waypoint reached" id="wp0"><span class="wdot"></span><span class="wlabel">Plan</span></div>
+            <div class="waypoint" id="wp1"><span class="wdot"></span><span class="wlabel">Build</span></div>
+            <div class="waypoint" id="wp2"><span class="wdot"></span><span class="wlabel">Launch</span></div>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="lbl">Progress</div>
+            <div class="big"><span id="statProgress">20</span><span class="unit">%</span></div>
+          </div>
+          <div class="stat-card">
+            <div class="lbl">Tasks done</div>
+            <div class="big"><span id="statDone">1</span><span class="unit"> / 5</span></div>
+          </div>
+        </div>
+
+        <div class="task-list" id="taskList">
+          <div class="task-row done">
+            <span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span>
+            <span class="title">Collect brand assets</span>
+            <span class="task-tag low">low</span>
+          </div>
+          <div class="task-row">
+            <span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span>
+            <span class="title">Design homepage</span>
+            <span class="task-tag high">high</span>
+          </div>
+          <div class="task-row">
+            <span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span>
+            <span class="title">Review copy with team</span>
+            <span class="task-tag medium">medium</span>
+          </div>
+          <div class="task-row">
+            <span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span>
+            <span class="title">QA on staging</span>
+            <span class="task-tag medium">medium</span>
+          </div>
+          <div class="task-row">
+            <span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span>
+            <span class="title">Notify stakeholders</span>
+            <span class="task-tag low">low</span>
+          </div>
+        </div>
+
+        <div class="demo-hint">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9a3 3 0 1 1 4 2.8c-.6.3-1 .9-1 1.7v.5"/><path d="M12 17h.01"/><circle cx="12" cy="12" r="9.5"/></svg>
+          Check off tasks and watch your course fill in — just like the real app.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="why" data-leg="Why Project Pilot">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="leg-num">LEG 01</span> · Why Project Pilot</div>
+      <h2>Teams don't fail from lack of effort. They fail from drift.</h2>
+      <p>Scattered docs, half-updated spreadsheets, and a group chat nobody can scroll back through. Project Pilot gives every project a single, shared course — so drift never has a chance to start.</p>
+    </div>
+    <div class="drift-grid">
+      <div class="drift-card reveal">
+        <h3>Everything, one flight deck</h3>
+        <p>Projects, tasks, files, and conversation live in the same place — no more piecing updates together from five different apps.</p>
+      </div>
+      <div class="drift-card reveal">
+        <h3>Everyone knows their seat</h3>
+        <p>Owners, Admins, and Members each get exactly the permissions they need — enforced on the server, not just hidden in the UI.</p>
+      </div>
+      <div class="drift-card reveal">
+        <h3>Nothing slips by</h3>
+        <p>Assignments, comments, mentions, and approaching deadlines reach you the moment they happen — not the next time you remember to check.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" data-leg="Key Features">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="leg-num">LEG 02</span> · Key Features</div>
+      <h2>Every instrument you need on the panel</h2>
+      <p>Ten systems, working together, so you're never flying blind on a project.</p>
+    </div>
+    <div class="feature-grid reveal">
+      <div class="feature-card">
+        <span class="icon-box"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M8 3.5v17M3.5 9.5h17"/></svg></span>
+        <h3>Projects</h3>
+        <p>A clear overview and structure for every project you run.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-box"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span>
+        <h3>Tasks</h3>
+        <p>Deadlines, priorities, and assignments — never lost in a thread.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-box"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19c.8-3.2 3-4.8 5.5-4.8s4.7 1.6 5.5 4.8"/><path d="M15.5 6.2c1.5.3 2.6 1.6 2.6 3.1 0 1.5-1.1 2.8-2.6 3.1"/><path d="M17 14.5c2 .5 3.4 1.9 4 4.5"/></svg></span>
+        <h3>Teamwork</h3>
+        <p>Your whole crew, collaborating in one shared cockpit.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-box"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 19 6.3v5.4c0 4.4-2.9 7.6-7 8.8-4.1-1.2-7-4.4-7-8.8V6.3Z"/></svg></span>
+        <h3>Roles &amp; Permissions</h3>
+        <p>Full control over exactly who can do what.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-box"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10.5a6 6 0 0 1 12 0c0 4 1.5 5.2 1.5 5.8H4.5C4.5 15.7 6 14.5 6 10.5Z"/><path d="M10.2 19a1.9 1.9 0 0 0 3.6 0"/></svg></span>
+        <h3>Notifications</h3>
+        <p>Important changes reach you — no digging required.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-box"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4.8-4.8"/></svg></span>
+        <h3>Search</h3>
+        <p>Find any project, task, or comment in seconds.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-box"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-4.3 4-6.5 7.5-6.5s6.3 2.2 7.5 6.5"/></svg></span>
+        <h3>Profiles</h3>
+        <p>Team profiles that give every member a real presence.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-box"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 14.5 14.5 9.5"/><path d="M11 6.5 12.5 5a3.54 3.54 0 0 1 5 5L16 11.5"/><path d="M13 17.5 11.5 19a3.54 3.54 0 0 1-5-5L8 12.5"/></svg></span>
+        <h3>Resources</h3>
+        <p>Every link and file your project needs, one click away.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-box"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></span>
+        <h3>Security</h3>
+        <p>2FA, email verification, and account protection built in.</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-box"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2.5" width="9" height="15" rx="1.6"/><rect x="14.5" y="6" width="7" height="11.5" rx="1.4"/></svg></span>
+        <h3>Responsive Design</h3>
+        <p>The same clear cockpit on desktop, tablet, and phone.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how-it-works" data-leg="How it works">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="leg-num">LEG 03</span> · How Project Pilot Works</div>
+      <h2>Four waypoints to a finished project</h2>
+    </div>
+    <div class="flight-plan">
+      <div class="line" id="fpLine"></div>
+
+      <div class="fp-item reveal">
+        <span class="num"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M14.8 9.2 13.1 13.1 9.2 14.8 10.9 10.9Z"/></svg></span>
+        <span class="tag">01</span>
+        <h3>Chart the route</h3>
+        <p>Create a project from a ready-made template and break it into milestones — we call them waypoints. Every waypoint holds its own tasks, each with a priority and a deadline.</p>
+      </div>
+
+      <div class="fp-item reveal">
+        <span class="num"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19c.8-3.2 3-4.8 5.5-4.8s4.7 1.6 5.5 4.8"/><path d="M15.5 6.2c1.5.3 2.6 1.6 2.6 3.1 0 1.5-1.1 2.8-2.6 3.1"/><path d="M17 14.5c2 .5 3.4 1.9 4 4.5"/></svg></span>
+        <span class="tag">02</span>
+        <h3>Assemble the crew</h3>
+        <p>Add teammates and assign roles — Owner, Admin, Member. Decide exactly who can create tasks, delete milestones, or approve join requests. Any task can go to more than one person at once.</p>
+      </div>
+
+      <div class="fp-item reveal">
+        <span class="num"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10.5a6 6 0 0 1 12 0c0 4 1.5 5.2 1.5 5.8H4.5C4.5 15.7 6 14.5 6 10.5Z"/><path d="M10.2 19a1.9 1.9 0 0 0 3.6 0"/></svg></span>
+        <span class="tag">03</span>
+        <h3>Stay in contact</h3>
+        <p>Comments on tasks, @mentions, real-time notifications, and a full activity feed. Nobody has to ask "what's the status" in a group chat — it's already visible.</p>
+      </div>
+
+      <div class="fp-item reveal">
+        <span class="num"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 19 6.3v5.4c0 4.4-2.9 7.6-7 8.8-4.1-1.2-7-4.4-7-8.8V6.3Z"/><path d="M9 12l2 2 4-4.2"/></svg></span>
+        <span class="tag">04</span>
+        <h3>Land safely</h3>
+        <p>Two-factor authentication, permission checks enforced on the server — not just the interface — and a confirmation step before every irreversible action.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="teams" data-leg="For Teams">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="leg-num">LEG 04</span> · For Teams</div>
+      <h2>Built for crews, not solo checklists</h2>
+      <p>Whether it's a five-person startup, a student project group, or a growing team, Project Pilot scales to how you actually work together.</p>
+    </div>
+    <div class="grid-2">
+      <div class="card reveal">
+        <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 19 6.3v5.4c0 4.4-2.9 7.6-7 8.8-4.1-1.2-7-4.4-7-8.8V6.3Z"/></svg>
+        <h3>Role-based access</h3>
+        <p>Every project has an Owner, Admins, and Members. The Owner decides exactly what each role can do — from creating tasks to approving new members.</p>
+        <div class="role-strip">
+          <span class="role-chip owner">Owner</span>
+          <span class="role-chip">Admin</span>
+          <span class="role-chip">Member</span>
+        </div>
+      </div>
+      <div class="card reveal">
+        <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-4.3 4-6.5 7.5-6.5s6.3 2.2 7.5 6.5"/></svg>
+        <h3>Real team profiles</h3>
+        <p>Follow teammates, browse who's on a project, and send join requests to projects that are discoverable — all without exposing anything private.</p>
+      </div>
+      <div class="card reveal">
+        <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18"/><path d="M6 4.5c2-1 4-1 6 0s4 1 6 0v9c-2 1-4 1-6 0s-4-1-6 0Z"/></svg>
+        <h3>Milestones everyone can see</h3>
+        <p>Break work into waypoints with their own deadlines, so the whole team can see where the project actually stands — not just where it's supposed to be.</p>
+      </div>
+      <div class="card reveal">
+        <svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10.5a6 6 0 0 1 12 0c0 4 1.5 5.2 1.5 5.8H4.5C4.5 15.7 6 14.5 6 10.5Z"/><path d="M10.2 19a1.9 1.9 0 0 0 3.6 0"/></svg>
+        <h3>A shared activity feed</h3>
+        <p>See what teammates completed, assigned, or commented on — across every project you're part of, in one continuous timeline.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="security" data-leg="Security">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow"><span class="leg-num">LEG 05</span> · Security</div>
+      <h2>Locked down before takeoff</h2>
+      <p>Security isn't an afterthought bolted on later — every permission check happens on the server, not just in what you see on screen.</p>
+    </div>
+    <div class="security-grid reveal">
+      <div class="sec-card">
+        <span class="icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></span>
+        <div>
+          <h3>Two-factor authentication</h3>
+          <p>Add an extra one-time code at login, sent straight to your email, whenever you want it.</p>
+        </div>
+      </div>
+      <div class="sec-card">
+        <span class="icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5 12 3l8 3.5v5.4c0 4.9-3.2 8.5-8 9.9-4.8-1.4-8-5-8-9.9Z"/><path d="M9 12l2 2 4-4.5"/></svg></span>
+        <div>
+          <h3>Email verification</h3>
+          <p>Every account confirms its email before it can touch a project — no throwaway logins.</p>
+        </div>
+      </div>
+      <div class="sec-card">
+        <span class="icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></span>
+        <div>
+          <h3>Server-side permissions</h3>
+          <p>Every action is checked against your role on the backend — not just hidden behind a disabled button.</p>
+        </div>
+      </div>
+      <div class="sec-card">
+        <span class="icon-box"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6"/></svg></span>
+        <div>
+          <h3>Confirmation on every irreversible action</h3>
+          <p>Deleting a project or removing a teammate always asks first. No accidental one-click disasters.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="preview" data-leg="App Preview">
+  <div class="wrap">
+    <div class="section-head center reveal">
+      <div class="eyebrow"><span class="leg-num">LEG 06</span> · App Preview</div>
+      <h2>A closer look at the cockpit</h2>
+      <p>An illustrative look at the real interface — built in the exact same visual language as the app itself.</p>
+    </div>
+
+    <div class="preview-tabs reveal" id="previewTabs">
+      <button class="preview-tab active" data-target="tab-dashboard" type="button">Dashboard</button>
+      <button class="preview-tab" data-target="tab-board" type="button">Task Board</button>
+      <button class="preview-tab" data-target="tab-team" type="button">Team &amp; Roles</button>
+    </div>
+
+    <div class="preview-frame reveal">
+      <div class="preview-chrome">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="preview-body">
+
+        <div class="preview-panel active" id="tab-dashboard">
+          <div class="mini-cards">
+            <div class="mini-project">
+              <svg class="ring" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" stroke="#24345c" stroke-width="4" fill="none"/><circle cx="20" cy="20" r="16" stroke="#60a5fa" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="100.5" stroke-dashoffset="24" transform="rotate(-90 20 20)"/></svg>
+              <div style="flex:1;"><div class="name">Website Relaunch</div><div class="bar"><b style="width:76%"></b></div></div>
+            </div>
+            <div class="mini-project">
+              <svg class="ring" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" stroke="#24345c" stroke-width="4" fill="none"/><circle cx="20" cy="20" r="16" stroke="#f5a623" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="100.5" stroke-dashoffset="60" transform="rotate(-90 20 20)"/></svg>
+              <div style="flex:1;"><div class="name">Q3 Marketing Plan</div><div class="bar"><b style="width:40%"></b></div></div>
+            </div>
+            <div class="mini-project">
+              <svg class="ring" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" stroke="#24345c" stroke-width="4" fill="none"/><circle cx="20" cy="20" r="16" stroke="#4ade80" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="100.5" stroke-dashoffset="9" transform="rotate(-90 20 20)"/></svg>
+              <div style="flex:1;"><div class="name">Client Onboarding</div><div class="bar"><b style="width:91%"></b></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-panel" id="tab-board">
+          <div class="kanban">
+            <div class="kanban-col">
+              <div class="col-title">To do</div>
+              <div class="kanban-card">Collect brand assets<span class="kt">low</span></div>
+              <div class="kanban-card">Draft sitemap<span class="kt">medium</span></div>
+            </div>
+            <div class="kanban-col">
+              <div class="col-title">In progress</div>
+              <div class="kanban-card">Design homepage<span class="kt">high</span></div>
+            </div>
+            <div class="kanban-col">
+              <div class="col-title">Done</div>
+              <div class="kanban-card">Kickoff meeting<span class="kt">low</span></div>
+              <div class="kanban-card">Set project roles<span class="kt">medium</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-panel" id="tab-team">
+          <div class="team-row"><span class="team-avatar"></span><span class="name">Alex Morgan</span><span class="team-role owner">Owner</span></div>
+          <div class="team-row"><span class="team-avatar"></span><span class="name">Jordan Lee</span><span class="team-role">Admin</span></div>
+          <div class="team-row"><span class="team-avatar"></span><span class="name">Sam Rivera</span><span class="team-role">Member</span></div>
+          <div class="team-row"><span class="team-avatar"></span><span class="name">Priya Nair</span><span class="team-role">Member</span></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cta">
+  <div class="wrap">
+    <div class="download reveal">
+      <div class="eyebrow" style="justify-content:center;">Free · Web</div>
+      <h2>Start your next project.</h2>
+      <p style="max-width:48ch;margin:0 auto 1.6em;color:var(--ink-soft);">Set your course in minutes — your account and first project template are ready before your coffee is.</p>
+      <a class="btn" href="https://project-pilot-1n5w.onrender.com">Start Your Next Project →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-row">
+    <span style="display:flex;align-items:center;gap:8px;">
+      Project Pilot — Stay on Course
+    </span>
+    <span>© 2026 <a href="https://milanfridrich.is-a.dev" style="color: inherit; text-decoration: none;">Milan Fridrich</a></span>
+  </div>
+</footer>
+
+<script>
+  // mobile nav
+  const menuToggle = document.getElementById('menuToggle');
+  const navLinks = document.getElementById('navLinks');
+  menuToggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    menuToggle.classList.toggle('open', isOpen);
+    menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  });
+  navLinks.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      menuToggle.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // scroll-reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  const fpLine = document.getElementById('fpLine');
+  if (fpLine) {
+    const lineIo = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { fpLine.classList.add('in'); lineIo.unobserve(e.target); } });
+    }, { threshold: 0.05 });
+    lineIo.observe(fpLine);
+  }
+
+  // ---- course instrument: heading dial + progress bar driven by scroll ----
+  const courseBarFill = document.getElementById('courseBarFill');
+  const courseHud = document.getElementById('courseHud');
+  const hudDial = document.getElementById('hudDial');
+  const hudHeading = document.getElementById('hudHeading');
+  const hudSection = document.getElementById('hudSection');
+  const legSections = Array.from(document.querySelectorAll('section[data-leg]'));
+  let currentLeg = 'Hero';
+  let ticking = false;
+
+  function updateCourse() {
+    const doc = document.documentElement;
+    const scrollTop = window.scrollY || doc.scrollTop;
+    const scrollHeight = doc.scrollHeight - doc.clientHeight;
+    const pct = scrollHeight > 0 ? Math.min(1, Math.max(0, scrollTop / scrollHeight)) : 0;
+
+    courseBarFill.style.width = (pct * 100).toFixed(1) + '%';
+    courseHud.classList.toggle('show', scrollTop > 80);
+
+    const heading = Math.round(pct * 360);
+    hudDial.style.transform = 'rotate(' + heading + 'deg)';
+    hudHeading.textContent = 'HDG ' + String(heading).padStart(3, '0') + '\u00B0';
+    hudSection.textContent = currentLeg;
+
+    ticking = false;
+  }
+  window.addEventListener('scroll', () => {
+    if (!ticking) { requestAnimationFrame(updateCourse); ticking = true; }
+  });
+  updateCourse();
+
+  const legIo = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) currentLeg = e.target.dataset.leg;
+    });
+  }, { threshold: 0, rootMargin: '-45% 0px -45% 0px' });
+  legSections.forEach(s => legIo.observe(s));
+
+  // ---- interactive demo: checking off tasks fills the course, moves the
+  // plane marker, and lights up waypoints — mirrors real project progress ----
+  const taskRows = Array.from(document.querySelectorAll('.task-row'));
+  const routeFill = document.getElementById('routeFill');
+  const routePlane = document.getElementById('routePlane');
+  const statusPill = document.getElementById('statusPill');
+  const statusLabel = document.getElementById('statusLabel');
+  const statProgress = document.getElementById('statProgress');
+  const statDone = document.getElementById('statDone');
+  const waypoints = [document.getElementById('wp0'), document.getElementById('wp1'), document.getElementById('wp2')];
+
+  function updateDemo() {
+    const total = taskRows.length;
+    const done = taskRows.filter(r => r.classList.contains('done')).length;
+    const pct = Math.round((done / total) * 100);
+    const trackPct = Math.max(8, pct);
+
+    routeFill.style.width = trackPct + '%';
+    routePlane.style.left = trackPct + '%';
+    statProgress.textContent = pct;
+    statDone.textContent = done;
+
+    waypoints[0].classList.add('reached');
+    waypoints[1].classList.toggle('reached', pct >= 40);
+    waypoints[2].classList.toggle('reached', pct >= 100);
+
+    statusPill.classList.remove('mid', 'done');
+    if (pct >= 100) {
+      statusLabel.textContent = 'ARRIVED';
+      statusPill.classList.add('done');
+    } else if (pct >= 40) {
+      statusLabel.textContent = 'ON COURSE';
+      statusPill.classList.add('mid');
+    } else {
+      statusLabel.textContent = 'OFF THE RUNWAY';
+    }
+  }
+  taskRows.forEach(row => {
+    row.addEventListener('click', () => { row.classList.toggle('done'); updateDemo(); });
+  });
+  updateDemo();
+
+  // preview tabs
+  const previewTabs = document.querySelectorAll('.preview-tab');
+
+  previewTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      previewTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll('.preview-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(tab.dataset.target).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
